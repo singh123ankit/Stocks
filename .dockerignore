@@ -1,0 +1,10 @@
+.git
+.gitignore
+.dockerignore
+.env1
+.env2
+*.yaml
+*.yml
+db_password.txt
+Makefile
+Stock

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+############################################# Stocks Deployment #############################################################
+  stocks:
+    image: stocks
+    ports:
+      - "8000:8000"
+    networks:
+      - stocks_net
+    env_file:
+      - .env2
+
+networks:
+  stocks_net:
+    driver: bridge

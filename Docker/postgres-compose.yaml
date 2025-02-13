@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+################################ PostgreSql Deployment  #################################
+  postgres:
+    restart: always
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - /home/coreData/database:/var/lib/postgresql/data
+#   environment:
+#     - POSTGRES_USER: ${POSTGRES_USER:-postgres}
+#     - POSTGRES_PASSWORD_FILE: ${POSTGRES_PASSWORD_FILE:-/run/secrets/db_password}
+    env_file:
+      - .env1
+    secrets:
+      - db_password
+    networks:
+      - stocks_net
+################################# Networks ###########################################
+secrets:
+  db_password:
+    file: ./db_password.txt
+
+networks:
+  stocks_net:
+    driver: bridge
