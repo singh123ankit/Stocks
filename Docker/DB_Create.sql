@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS stocksdb;
+DROP DATABASE IF EXISTS stocksdb;
+CREATE DATABASE stocksdb;
 
 \c stocksdb;
 

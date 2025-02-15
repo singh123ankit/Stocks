@@ -1,15 +1,15 @@
-version: '3.8'
+#version: '3.8'
 
 services:
 ############################################# Stocks Deployment #############################################################
   stocks:
-    image: stocks
+    image: stock:v1
     ports:
       - "8000:8000"
     networks:
       - stocks_net
     env_file:
-      - .env2
+      - stock.env
 
 networks:
   stocks_net:
