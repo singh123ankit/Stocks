@@ -28,6 +28,7 @@ func CreateStock(w http.ResponseWriter, r *http.Request) {
 	insertID, err := db.InsertStock(stock)
 	if err != nil {
 		http.Error(w, "Error while inserting record", http.StatusInternalServerError)
+		return
 	}
 	res := response{
 		ID:      insertID,
@@ -54,7 +55,7 @@ func GetStock(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "No record found for this ID", http.StatusBadRequest)
 			return
 		}
-		log.Fatalf("Unable to get record: %v", err)
+		log.Printf("Unable to get record: %v", err)
 		http.Error(w, "Failed to connect to the database !", http.StatusInternalServerError)
 		return
 	}

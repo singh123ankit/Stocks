@@ -32,5 +32,9 @@ dependency:
 	go mod tidy
 
 clean:
-	@echo "Removing previous binary"
-	rm Stock
+	@if [ -f "$(SERVICE_NAME)" ]; then \
+		rm $(SERVICE_NAME); \
+		echo "Previous binary removed"; \
+	else \
+		echo "Previous binary doesn't exist"; \
+	fi

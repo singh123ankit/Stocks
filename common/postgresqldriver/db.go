@@ -42,7 +42,7 @@ func InsertStock(stock models.Stock) (int64, error) {
 	var id int64
 	err := dbH.QueryRow(stmt, stock.Name, stock.Price, stock.Company).Scan(&id)
 	if err != nil {
-		log.Fatalf("Failed to insert Stock record into the database: %v", err)
+		log.Printf("Failed to insert Stock record into the database: %v", err)
 		return id, err
 	}
 	fmt.Printf("Inserted record successfully %v", id)
@@ -62,7 +62,7 @@ func GetAllStocks() ([]models.Stock, error) {
 	stmt := `SELECT * FROM stocks`
 	rows, err := dbH.Query(stmt)
 	if err != nil {
-		log.Fatalf("Unable to execute the query: %v", err)
+		log.Printf("Unable to execute the query: %v", err)
 		return stocks, err
 	}
 
@@ -71,7 +71,7 @@ func GetAllStocks() ([]models.Stock, error) {
 		var stock models.Stock
 		err = rows.Scan(&stock.StockID, &stock.Name, &stock.Price, &stock.Company)
 		if err != nil {
-			log.Fatalf("Unable to scan the row %v", err)
+			log.Printf("Unable to scan the row %v", err)
 			return stocks, err
 		}
 		stocks = append(stocks, stock)
@@ -85,12 +85,12 @@ func UpdateStock(id int64, stock models.Stock) (int64, error) {
 	stmt := `UPDATE stocks SET name=$2, price=$3, company=$4 WHERE stockid=$1`
 	res, err := dbH.Exec(stmt, id, stock.Name, stock.Price, stock.Company)
 	if err != nil {
-		log.Fatalf("Unable to execute the query %v", err)
+		log.Printf("Unable to execute the query %v", err)
 		return rowsAffected, err
 	}
 	rowsAffected, err = res.RowsAffected()
 	if err != nil {
-		log.Fatalf("Error while checking the affected rows %v", err)
+		log.Printf("Error while checking the affected rows %v", err)
 		return rowsAffected, err
 	}
 	fmt.Printf("Total rows/records affected: %v\n", rowsAffected)
@@ -103,12 +103,12 @@ func DeleteStock(id int64) (int64, error) {
 	stmt := `DELETE FROM stocks WHERE stockid=$1`
 	res, err := dbH.Exec(stmt, id)
 	if err != nil {
-		log.Fatalf("Error while executing query %v", err)
+		log.Printf("Error while executing query %v", err)
 		return rowsAffected, err
 	}
 	rowsAffected, err = res.RowsAffected()
 	if err != nil {
-		log.Fatalf("Error while checking the affected rows %v", err)
+		log.Printf("Error while checking the affected rows %v", err)
 		return rowsAffected, err
 	}
 	fmt.Printf("Total rows/records affected: %v", rowsAffected)
