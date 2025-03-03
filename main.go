@@ -4,33 +4,42 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
-	"github.com/gorilla/mux"
+	"context"
+	"os"
+	"os/signal"
+
 	psq "github.com/singh123ankit/Stocks/common/postgresqldriver"
 	"github.com/singh123ankit/Stocks/router"
 )
 
-var gExitChan = make(chan error)
-
 func main() {
 	dbH := psq.InitDB()
+	r := router.Router()
+	server := &http.Server{
+		Addr:    ":8000",
+		Handler: r,
+	}
+	go startServer(server)
+	fmt.Println("Starting Server at 8000:")
+	sigChan := make(chan os.Signal, 2)
+	signal.Notify(sigChan, os.Interrupt, os.Kill)
+	sig := <-sigChan
+	fmt.Println("Received Interrupt signal", sig)
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(30*time.Second))
 	defer func() {
 		if dbH != nil {
 			dbH.Close()
 		}
+		cancel()
 	}()
-	r := router.Router()
-	startServer(r)
-	fmt.Println("Starting Server at 8000:")
-	err := <-gExitChan
-	log.Fatal(err)
+	server.Shutdown(ctx)
 }
 
-func startServer(r *mux.Router) {
-	go func(r *mux.Router) {
-		err := http.ListenAndServe(":8000", r)
-		if err != nil {
-			gExitChan <- err
-		}
-	}(r)
+func startServer(server *http.Server) {
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

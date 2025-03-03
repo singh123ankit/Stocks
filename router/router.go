@@ -7,11 +7,11 @@ import (
 
 func Router() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/api/stock/{id}", handler.GetStock).Methods("GET", "ACTIONS")
-	router.HandleFunc("/api/stock", handler.GetAllStock).Methods("GET", "ACTIONS")
-	router.HandleFunc("/api/stock/{id}", handler.UpdateStock).Methods("PUT", "ACTIONS")
-	router.HandleFunc("/api/newstock", handler.CreateStock).Methods("POST", "ACTIONS")
-	router.HandleFunc("/api/stock/{id}", handler.DeleteStock).Methods("DELETE", "ACTIONS")
+	router.HandleFunc("/api/stock/{id}", handler.GetStock).Methods("GET")
+	router.HandleFunc("/api/stock", handler.GetAllStock).Methods("GET")
+	router.HandleFunc("/api/stock/{id}", handler.UpdateStock).Methods("PUT")
+	router.HandleFunc("/api/newstock", handler.CreateStock).Methods("POST")
+	router.HandleFunc("/api/stock/{id}", handler.DeleteStock).Methods("DELETE")
 
 	return router
 }
