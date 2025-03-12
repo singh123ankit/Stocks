@@ -23,8 +23,8 @@ func main() {
 	}
 	go startServer(server)
 	fmt.Println("Starting Server at 8000:")
-	sigChan := make(chan os.Signal, 2)
-	signal.Notify(sigChan, os.Interrupt, os.Kill)
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt)
 	sig := <-sigChan
 	fmt.Println("Received Interrupt signal", sig)
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(30*time.Second))
