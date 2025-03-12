@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -16,24 +17,31 @@ const (
 )
 
 var dbH *sql.DB
+var once sync.Once
 
+// Singleton Design Pattern
 func InitDB() *sql.DB {
 	var err error
 
-	connStr, ok := os.LookupEnv("DATABASE_URL")
-	if !ok {
-		log.Println("Environment variable DATABASE_URL is not set.")
-	}
-	for i := 1; i <= 10; i++ {
-		dbH, err = sql.Open(DBDRIVER, connStr)
-		if err != nil {
-			log.Printf("Error: %v | Retrying to connect to the database after 10s......", err)
-			time.Sleep(10 * time.Second)
-			continue
+	once.Do(func() {
+		connStr, ok := os.LookupEnv("DATABASE_URL")
+		if !ok {
+			log.Println("Environment variable DATABASE_URL is not set.")
 		}
-		break
-	}
-	log.Printf("Database connection handler dbH: %v\n", dbH)
+		for i := 1; i <= 10; i++ {
+			dbH, err = sql.Open(DBDRIVER, connStr)
+			if err != nil {
+				log.Printf("Error: %v | Retrying to connect to the database after 10s......", err)
+				time.Sleep(10 * time.Second)
+				continue
+			}
+			dbH.SetMaxOpenConns(10)
+			dbH.SetMaxIdleConns(5)
+			dbH.SetConnMaxLifetime(30 * time.Minute)
+			break
+		}
+		log.Printf("Database connection handler dbH: %v\n", dbH)
+	})
 	return dbH
 }
 
